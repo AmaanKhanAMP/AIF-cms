@@ -24,18 +24,24 @@ function matchesSearch(item, query) {
   const haystack = [
     item.title,
     item.name,
+    item.label,
+    item.alt_text,
+    item.href,
     item.subtitle,
     item.description,
     item.message,
     item.venue,
     item.category,
     item.event_date,
+    item.date_label,
     item.designation,
     item.organisation,
     item.location,
     item.status,
     item.primary_btn_text,
     item.button_text,
+    item.item_type,
+    item.parent_key,
   ]
     .filter(Boolean)
     .join(" ")
@@ -52,6 +58,8 @@ export default function ContentListPage({
   imageKey = "image_url",
   titleKey = "title",
   large = false,
+  hideImage = false,
+  headerExtra = null,
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -171,6 +179,7 @@ export default function ContentListPage({
       <PageHeader
         title={title}
         description={description}
+        className={hideImage ? "mb-5" : undefined}
         actions={
           <Link href={`${basePath}/new`}>
             <Button>
@@ -181,7 +190,9 @@ export default function ContentListPage({
         }
       />
 
-      <div className="mb-5 space-y-3">
+      {headerExtra}
+
+      <div className={`mb-5 space-y-3 ${hideImage ? "mt-0" : ""}`}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <SearchInput
             value={search}
@@ -235,7 +246,13 @@ export default function ContentListPage({
       ) : (
         <motion.div
           layout
-          className={large ? "space-y-5" : "grid gap-5 sm:grid-cols-2 xl:grid-cols-3"}
+          className={
+            large
+              ? "space-y-5"
+              : hideImage
+                ? "grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+                : "grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+          }
         >
           <AnimatePresence mode="popLayout">
             {filtered.map((item, index) => (
@@ -252,7 +269,8 @@ export default function ContentListPage({
                   href={`${basePath}/${item.id}`}
                   imageKey={imageKey}
                   titleKey={titleKey}
-                  onPreview={() => setPreview(item)}
+                  hideImage={hideImage}
+                  onPreview={hideImage ? undefined : () => setPreview(item)}
                   onDuplicate={() => handleDuplicate(item.id)}
                   onTogglePublish={() => handleTogglePublish(item)}
                   onDelete={() => setConfirm({ open: true, id: item.id })}
@@ -310,9 +328,11 @@ export default function ContentListPage({
                 Order {preview.display_order}
               </span>
             </div>
-            <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-600">
-              {preview.subtitle || preview.description || preview.message || "No description."}
-            </p>
+            {preview.subtitle || preview.description || preview.message ? (
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-600">
+                {preview.subtitle || preview.description || preview.message}
+              </p>
+            ) : null}
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="secondary" onClick={() => setPreview(null)}>
                 Close

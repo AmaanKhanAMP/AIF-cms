@@ -11,9 +11,12 @@ import {
   Home,
   Image as ImageIcon,
   LayoutDashboard,
+  Link2,
   LogOut,
   Mail,
+  Menu,
   MessageSquareQuote,
+  PanelBottom,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
@@ -38,10 +41,20 @@ const NAV = [
     icon: Home,
     children: [
       {
+        label: "Site Layout",
+        children: [
+          { label: "Navbar", href: "/site/navbar", icon: Menu },
+          { label: "Footer", href: "/site/footer", icon: PanelBottom },
+          { label: "Useful Links", href: "/site/footer/links", icon: Link2 },
+          { label: "Recent Focus", href: "/site/footer/focus", icon: Sparkles },
+        ],
+      },
+      {
         label: "Home Page",
         children: [
           { label: "Hero Banners", href: "/home/hero-banners", icon: Sparkles },
           { label: "Latest Projects", href: "/home/projects", icon: GalleryHorizontalEnd },
+          { label: "Photo Gallery", href: "/home/gallery", icon: ImageIcon },
           { label: "Upcoming Events", href: "/home/events", icon: CalendarDays },
           { label: "Testimonials", href: "/home/testimonials", icon: MessageSquareQuote },
         ],
@@ -51,7 +64,7 @@ const NAV = [
         children: [
           { label: "Featured Events", href: "/events/featured", icon: Star },
           { label: "Upcoming Events", href: "/events/upcoming", icon: CalendarDays },
-          { label: "Past Event Gallery", href: "/events/gallery", icon: ImageIcon },
+          { label: "Past Events", href: "/events/gallery", icon: ImageIcon },
         ],
       },
     ],
@@ -148,6 +161,7 @@ function SidebarNav({ collapsed, onNavigate }) {
   const { logout, user } = useAuth();
   const [openGroups, setOpenGroups] = useState({
     "Website Management": true,
+    "Site Layout": true,
     "Home Page": true,
     "Events Page": true,
     Messages: true,

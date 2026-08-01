@@ -2,10 +2,12 @@
 
 import { useId, useState } from "react";
 import { cn } from "@/utils/cn";
+import CharacterCounter from "@/components/ui/CharacterCounter";
 
 /**
  * Premium input with floating label.
  * Floating fields use a taller box so the label never overlaps the value.
+ * Supports maxLength + live character counter.
  */
 export default function Input({
   label,
@@ -19,30 +21,53 @@ export default function Input({
   onChange,
   onFocus,
   onBlur,
+  maxLength,
+  showCounter = true,
+  type,
   ...props
 }) {
   const autoId = useId();
   const inputId = id || props.name || autoId;
   const [focused, setFocused] = useState(false);
-  const hasValue =
-    (value !== undefined && value !== null && String(value).length > 0) ||
-    (value === undefined &&
-      defaultValue !== undefined &&
-      defaultValue !== null &&
-      String(defaultValue).length > 0);
+  const stringValue =
+    value !== undefined && value !== null
+      ? String(value)
+      : defaultValue !== undefined && defaultValue !== null
+        ? String(defaultValue)
+        : "";
+  const hasValue = stringValue.length > 0;
   const floated = focused || hasValue || Boolean(placeholder);
+  const length = stringValue.length;
+  const inputType = type || "text";
+  const isTextLike =
+    inputType === "text" || inputType === "url" || inputType === "email" || inputType === "tel";
+  const counterVisible = showCounter && maxLength != null && isTextLike;
+
+  const handleChange = (e) => {
+    if (maxLength != null && e.target.value.length > maxLength) {
+      e.target.value = e.target.value.slice(0, maxLength);
+    }
+    onChange?.(e);
+  };
 
   if (!label) {
     return (
       <div className="block space-y-1.5">
+        {counterVisible ? (
+          <div className="flex justify-end">
+            <CharacterCounter length={length} maxLength={maxLength} />
+          </div>
+        ) : null}
         <input
           id={inputId}
+          type={inputType}
           value={value}
           defaultValue={defaultValue}
           placeholder={placeholder}
-          onChange={onChange}
           className={cn("cms-input", error && "border-red-300", className)}
           {...props}
+          maxLength={maxLength}
+          onChange={handleChange}
         />
         {error ? <span className="text-xs font-medium text-red-600">{error}</span> : null}
         {!error && hint ? <span className="text-xs text-slate-400">{hint}</span> : null}
@@ -55,10 +80,20 @@ export default function Input({
       <div className="relative">
         <input
           id={inputId}
+          type={inputType}
           value={value}
           defaultValue={defaultValue}
           placeholder={floated ? placeholder || " " : " "}
-          onChange={onChange}
+          className={cn(
+            "peer cms-input !h-14 px-3.5 pb-2.5 pt-6 text-sm leading-snug",
+            counterVisible && "pr-16",
+            error &&
+              "border-red-300 focus:!border-red-400 focus:!shadow-[0_0_0_4px_rgba(248,113,113,0.15)]",
+            className
+          )}
+          {...props}
+          maxLength={maxLength}
+          onChange={handleChange}
           onFocus={(e) => {
             setFocused(true);
             onFocus?.(e);
@@ -67,13 +102,6 @@ export default function Input({
             setFocused(false);
             onBlur?.(e);
           }}
-          className={cn(
-            "peer cms-input !h-14 px-3.5 pb-2.5 pt-6 text-sm leading-snug",
-            error &&
-              "border-red-300 focus:!border-red-400 focus:!shadow-[0_0_0_4px_rgba(248,113,113,0.15)]",
-            className
-          )}
-          {...props}
         />
         <label
           htmlFor={inputId}
@@ -86,6 +114,11 @@ export default function Input({
         >
           {label}
         </label>
+        {counterVisible ? (
+          <div className="pointer-events-none absolute right-3 top-2">
+            <CharacterCounter length={length} maxLength={maxLength} />
+          </div>
+        ) : null}
       </div>
       {error ? <span className="text-xs font-medium text-red-600">{error}</span> : null}
       {!error && hint ? <span className="text-xs text-slate-400">{hint}</span> : null}

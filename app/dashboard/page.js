@@ -70,7 +70,7 @@ export default function DashboardPage() {
       icon: CalendarDays,
       href: "/events/upcoming",
     },
-    { title: "Gallery Images", value: stats?.gallery_items ?? "—", icon: ImageIcon, href: "/events/gallery" },
+    { title: "Past Events", value: stats?.gallery_items ?? "—", icon: ImageIcon, href: "/events/gallery" },
     {
       title: "Contact Messages",
       value: stats?.contact_messages ?? "—",

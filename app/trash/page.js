@@ -22,11 +22,15 @@ const MODULE_OPTIONS = [
   { value: "", label: "All modules" },
   { value: RESOURCES.HERO_BANNERS, label: "Hero Banners" },
   { value: RESOURCES.HOME_PROJECTS, label: "Home Projects" },
+  { value: RESOURCES.HOME_GALLERY, label: "Photo Gallery" },
   { value: RESOURCES.HOME_EVENTS, label: "Home Events" },
   { value: RESOURCES.TESTIMONIALS, label: "Testimonials" },
   { value: RESOURCES.FEATURED_EVENTS, label: "Featured Events" },
   { value: RESOURCES.UPCOMING_EVENTS, label: "Upcoming Events" },
-  { value: RESOURCES.GALLERY_ITEMS, label: "Gallery" },
+  { value: RESOURCES.GALLERY_ITEMS, label: "Past Events" },
+  { value: RESOURCES.NAVBAR_ITEMS, label: "Navbar" },
+  { value: RESOURCES.FOOTER_LINKS, label: "Footer Links" },
+  { value: RESOURCES.FOOTER_FOCUS, label: "Footer Focus" },
 ];
 
 const SORT_OPTIONS = [

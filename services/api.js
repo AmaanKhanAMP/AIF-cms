@@ -1,6 +1,6 @@
 import axios from "axios";
 import { AUTH_COOKIE, TOKEN_KEY } from "@/utils/constants";
-import { getApiBaseUrl } from "@/utils/imageUrl";
+import { getApiBaseUrl } from "@/lib/api";
 
 const api = axios.create({
   baseURL: getApiBaseUrl(),
@@ -29,6 +29,7 @@ export function clearAuthToken() {
 }
 
 api.interceptors.request.use((config) => {
+  config.baseURL = getApiBaseUrl();
   const token = readToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

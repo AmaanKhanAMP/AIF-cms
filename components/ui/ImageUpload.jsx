@@ -72,7 +72,10 @@ export default function ImageUpload({
         onDrop={onDrop}
         className={cn(
           "relative overflow-hidden rounded-2xl border-2 border-dashed transition",
-          aspect === "square" ? "aspect-square" : "aspect-video",
+          aspect === "square" && "aspect-square",
+          aspect === "video" && "aspect-video",
+          aspect === "logo" && "flex h-28 items-center justify-center sm:h-32",
+          !["square", "video", "logo"].includes(aspect) && "aspect-video",
           dragging
             ? "border-[var(--primary)] bg-blue-50 shadow-[0_0_0_4px_rgba(59,130,246,0.12)]"
             : "border-slate-200 bg-gradient-to-b from-slate-50 to-white",
@@ -85,7 +88,10 @@ export default function ImageUpload({
             <img
               src={resolveImageUrl(value)}
               alt="Upload preview"
-              className="h-full w-full object-cover"
+              className={cn(
+                "h-full w-full",
+                aspect === "logo" ? "object-contain p-3" : "object-cover"
+              )}
             />
             <div className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/50 to-transparent p-3 opacity-0 transition hover:opacity-100">
               <button

@@ -22,9 +22,17 @@ Ensure `.env.local` exists:
 NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
+On Vercel (Production), set:
+
+```env
+NEXT_PUBLIC_API_URL=https://aif-backend-6jwe.onrender.com
+```
+
+CMS is Next.js — use `NEXT_PUBLIC_API_URL` (not `VITE_API_URL`). Restart `npm run dev` after changing env vars.
+
 ## Run
 
-1. Start the Flask backend on port 5000.
+1. Ensure the Flask backend is reachable (local `:5000` or Render).
 2. Seed an admin user if needed:
 
 ```bash

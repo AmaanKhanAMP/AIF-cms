@@ -17,7 +17,7 @@ const SEARCH_PAGES = [
   { label: "Testimonials", href: "/home/testimonials", keywords: "reviews quotes" },
   { label: "Featured Events", href: "/events/featured", keywords: "featured" },
   { label: "Upcoming Events", href: "/events/upcoming", keywords: "upcoming calendar" },
-  { label: "Past Event Gallery", href: "/events/gallery", keywords: "gallery images past" },
+  { label: "Past Events", href: "/events/gallery", keywords: "past events gallery images legacy" },
   { label: "Contact Messages", href: "/messages/contact", keywords: "inbox mail contact" },
   { label: "Profile", href: "/settings/profile", keywords: "account settings" },
   { label: "Change Password", href: "/settings/password", keywords: "security password" },

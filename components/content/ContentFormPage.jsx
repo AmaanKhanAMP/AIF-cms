@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AdminLayout from "@/layouts/AdminLayout";
 import FormShell from "@/components/common/FormShell";
@@ -12,6 +12,7 @@ import LoadingSkeleton, { Skeleton } from "@/components/common/LoadingSkeleton";
 import { createContentService } from "@/services/contentService";
 import { useToast } from "@/contexts/ToastContext";
 import { STATUS_OPTIONS } from "@/utils/constants";
+import { validateContentForm, withFieldLimits } from "@/utils/fieldLimits";
 
 export default function ContentFormPage({
   resource,
@@ -32,6 +33,19 @@ export default function ContentFormPage({
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [dynamicOptions, setDynamicOptions] = useState({});
+
+  // Hard block unused Latest Projects fields even if an old config/cache still lists them.
+  const limitedFields = useMemo(() => {
+    const blocked =
+      resource === "home-projects"
+        ? new Set(["description", "button_text", "button_link"])
+        : null;
+    const next = withFieldLimits(resource, fields || []).filter(
+      (field) => !blocked || !blocked.has(field.name)
+    );
+    return next;
+  }, [resource, fields]);
 
   useEffect(() => {
     if (isNew) return;
@@ -40,7 +54,16 @@ export default function ContentFormPage({
       setLoading(true);
       try {
         const res = await service.get(id);
-        if (!cancelled) setForm({ ...defaults, ...(res.data || {}) });
+        if (!cancelled) {
+          const raw = { ...defaults, ...(res.data || {}) };
+          // Drop unused Latest Projects keys so they never linger in form state.
+          if (resource === "home-projects") {
+            delete raw.description;
+            delete raw.button_text;
+            delete raw.button_link;
+          }
+          setForm(raw);
+        }
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to load item.");
         router.replace(basePath);
@@ -53,18 +76,69 @@ export default function ContentFormPage({
     };
   }, [id, isNew]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    const optionFields = limitedFields.filter((f) => f.optionsResource);
+    if (!optionFields.length) return;
+    let cancelled = false;
+    (async () => {
+      const next = {};
+      await Promise.all(
+        optionFields.map(async (field) => {
+          try {
+            const svc = createContentService(field.optionsResource);
+            const res = await svc.list();
+            let items = res.data || [];
+            if (typeof field.optionsFilter === "function") {
+              items = items.filter(field.optionsFilter);
+            }
+            if (id && field.excludeSelf) {
+              items = items.filter((item) => String(item.id) !== String(id));
+            }
+            const mapped = typeof field.optionsMap === "function"
+              ? field.optionsMap(items)
+              : items.map((item) => ({
+                  value: item[field.optionsValueKey || "id"],
+                  label: item[field.optionsLabelKey || "title"] || item.label || item.name,
+                }));
+            next[field.name] = [
+              { value: "", label: field.optionsEmptyLabel || "— None —" },
+              ...mapped.filter((opt) => opt.value != null && opt.value !== ""),
+            ];
+          } catch {
+            next[field.name] = [
+              { value: "", label: field.optionsEmptyLabel || "— None —" },
+            ];
+          }
+        })
+      );
+      if (!cancelled) setDynamicOptions(next);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [limitedFields, id]);
+
   const setField = (key, value) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    const field = limitedFields.find((f) => f.name === key);
+    let next = value;
+    if (
+      field?.maxLength != null &&
+      typeof next === "string" &&
+      next.length > field.maxLength
+    ) {
+      next = next.slice(0, field.maxLength);
+    }
+    setForm((prev) => ({ ...prev, [key]: next }));
     setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
 
   const validate = () => {
-    const next = {};
-    fields.forEach((f) => {
-      if (f.required && !String(form[f.name] ?? "").trim()) {
-        next[f.name] = `${f.label} is required.`;
+    const next = validateContentForm(limitedFields, form);
+    if (resource === "navbar-items" && form.item_type === "dropdown") {
+      if (!String(form.item_key || "").trim()) {
+        next.item_key = "Dropdown key is required for dropdown parents (e.g. projects).";
       }
-    });
+    }
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -77,9 +151,15 @@ export default function ContentFormPage({
     setSaving(true);
     try {
       const payload = {};
-      fields.forEach((f) => {
+      limitedFields.forEach((f) => {
         let val = form[f.name];
         if (f.type === "number" && val !== "" && val != null) val = Number(val);
+        if (
+          (f.name === "parent_key" || f.name === "item_key") &&
+          (val === "" || val == null)
+        ) {
+          val = null;
+        }
         payload[f.name] = val;
       });
       if (isNew) await service.create(payload);
@@ -87,7 +167,11 @@ export default function ContentFormPage({
       toast.success(isNew ? "Created successfully." : "Saved successfully.");
       router.push(basePath);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Save failed.");
+      const data = err.response?.data;
+      if (data?.errors && typeof data.errors === "object") {
+        setErrors(data.errors);
+      }
+      toast.error(data?.message || "Save failed.");
     } finally {
       setSaving(false);
     }
@@ -110,7 +194,7 @@ export default function ContentFormPage({
           submitLabel={isNew ? "Create" : "Save changes"}
         >
           <div className="grid gap-5 md:grid-cols-2">
-            {fields.map((field) => {
+            {limitedFields.map((field) => {
               if (field.type === "image") {
                 return (
                   <div key={field.name} className={field.full ? "md:col-span-2" : ""}>
@@ -136,35 +220,53 @@ export default function ContentFormPage({
                       value={form[field.name] || ""}
                       onChange={(e) => setField(field.name, e.target.value)}
                       error={errors[field.name]}
+                      hint={field.hint}
                       rows={field.rows || 4}
+                      maxLength={field.maxLength}
                     />
                   </div>
                 );
               }
               if (field.type === "select") {
+                const options =
+                  dynamicOptions[field.name] || field.options || STATUS_OPTIONS;
                 return (
-                  <Select
+                  <div
                     key={field.name}
-                    label={field.label}
-                    name={field.name}
-                    value={form[field.name] ?? ""}
-                    onChange={(e) => setField(field.name, e.target.value)}
-                    options={field.options || STATUS_OPTIONS}
-                    error={errors[field.name]}
-                  />
+                    className={`space-y-1 ${field.full ? "md:col-span-2" : ""}`}
+                  >
+                    <Select
+                      label={field.label}
+                      name={field.name}
+                      value={form[field.name] ?? ""}
+                      onChange={(e) => setField(field.name, e.target.value)}
+                      options={options}
+                      error={errors[field.name]}
+                    />
+                    {field.hint ? (
+                      <p className="text-xs text-slate-400">{field.hint}</p>
+                    ) : null}
+                  </div>
                 );
               }
               return (
-                <Input
+                <div
                   key={field.name}
-                  label={field.label}
-                  name={field.name}
-                  type={field.type || "text"}
-                  value={form[field.name] ?? ""}
-                  onChange={(e) => setField(field.name, e.target.value)}
-                  error={errors[field.name]}
-                  placeholder={field.placeholder}
-                />
+                  className={field.full ? "md:col-span-2" : undefined}
+                >
+                  <Input
+                    label={field.label}
+                    name={field.name}
+                    type={field.type || "text"}
+                    value={form[field.name] ?? ""}
+                    onChange={(e) => setField(field.name, e.target.value)}
+                    error={errors[field.name]}
+                    placeholder={field.placeholder}
+                    hint={field.hint}
+                    maxLength={field.maxLength}
+                    showCounter={field.type !== "number"}
+                  />
+                </div>
               );
             })}
           </div>

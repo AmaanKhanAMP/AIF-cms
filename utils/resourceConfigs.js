@@ -1,5 +1,14 @@
-import { RESOURCES, STATUS_OPTIONS } from "@/utils/constants";
+import {
+  NAVBAR_ITEM_TYPE_OPTIONS,
+  RESOURCES,
+  STATUS_OPTIONS,
+} from "@/utils/constants";
 
+/**
+ * CMS form field configs.
+ * Character limits are applied centrally via utils/fieldLimits.js
+ * (UI-driven) — do not hardcode arbitrary maxLength here unless overriding.
+ */
 export const resourceConfigs = {
   [RESOURCES.HERO_BANNERS]: {
     resource: RESOURCES.HERO_BANNERS,
@@ -26,15 +35,61 @@ export const resourceConfigs = {
   [RESOURCES.HOME_PROJECTS]: {
     resource: RESOURCES.HOME_PROJECTS,
     title: "Latest Projects",
-    description: "Homepage project highlights.",
+    description: "Homepage project carousel — image and title only.",
     basePath: "/home/projects",
     folder: "home-projects",
+    // Homepage Projects.jsx renders only image + title. Do not add description/CTA fields.
     fields: [
-      { name: "image_url", label: "Project image", type: "image", required: true, full: true },
-      { name: "title", label: "Title", required: true },
-      { name: "description", label: "Description", type: "textarea" },
-      { name: "button_text", label: "Button text" },
-      { name: "button_link", label: "Button link" },
+      {
+        name: "image_url",
+        label: "Project image",
+        type: "image",
+        required: true,
+        full: true,
+        aspect: "video",
+      },
+      { name: "title", label: "Project title", required: true, full: true },
+      { name: "display_order", label: "Display order", type: "number" },
+      { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
+    ],
+  },
+  [RESOURCES.HOME_GALLERY]: {
+    resource: RESOURCES.HOME_GALLERY,
+    title: "Photo Gallery",
+    description: "Homepage Photo Gallery tiles with title and short description.",
+    basePath: "/home/gallery",
+    folder: "home-gallery",
+    titleKey: "title",
+    fields: [
+      {
+        name: "image_url",
+        label: "Gallery image",
+        type: "image",
+        required: true,
+        full: true,
+        aspect: "video",
+      },
+      {
+        name: "title",
+        label: "Gallery Title",
+        required: true,
+        full: true,
+      },
+      {
+        name: "description",
+        label: "Gallery Description",
+        type: "textarea",
+        required: true,
+        full: true,
+        rows: 3,
+      },
+      {
+        name: "alt_text",
+        label: "Alt text",
+        required: true,
+        full: true,
+        hint: "Describes the image for accessibility (shown as the image alt attribute).",
+      },
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
     ],
@@ -120,18 +175,98 @@ export const resourceConfigs = {
   },
   [RESOURCES.GALLERY_ITEMS]: {
     resource: RESOURCES.GALLERY_ITEMS,
-    title: "Past Gallery",
-    description: "Photo gallery items from past events.",
+    title: "Past Events",
+    description: "Past events shown on the Events page grid.",
     basePath: "/events/gallery",
     folder: "gallery-items",
     fields: [
-      { name: "image_url", label: "Gallery image", type: "image", required: true, full: true },
+      { name: "image_url", label: "Event image", type: "image", required: true, full: true },
       { name: "title", label: "Title", required: true },
-      { name: "description", label: "Description", type: "textarea" },
+      {
+        name: "description",
+        label: "Past Event Description",
+        type: "textarea",
+        required: true,
+        rows: 5,
+        hint: "Shown on each Past Event card on the public Events page.",
+      },
+      { name: "venue", label: "Venue" },
+      { name: "event_date", label: "Event date" },
+      { name: "event_time", label: "Event time" },
       { name: "category", label: "Category" },
-      { name: "year", label: "Year" },
-      { name: "location", label: "Location" },
-      { name: "alt_text", label: "Alt text" },
+      { name: "registration_link", label: "Details / registration link" },
+      { name: "display_order", label: "Display order", type: "number" },
+      { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
+    ],
+  },
+  [RESOURCES.NAVBAR_ITEMS]: {
+    resource: RESOURCES.NAVBAR_ITEMS,
+    title: "Navbar",
+    description: "Site navigation links and Projects dropdown items.",
+    basePath: "/site/navbar",
+    titleKey: "label",
+    hideImage: true,
+    folder: "navbar",
+    fields: [
+      { name: "label", label: "Label", required: true },
+      { name: "href", label: "Link", required: true, placeholder: "/about" },
+      {
+        name: "item_type",
+        label: "Item type",
+        type: "select",
+        options: NAVBAR_ITEM_TYPE_OPTIONS,
+        required: true,
+        hint: "Use Dropdown parent for PROJECTS. Children nest under its dropdown key.",
+      },
+      {
+        name: "item_key",
+        label: "Dropdown key",
+        placeholder: "projects",
+        hint: "Required for dropdown parents. Children reference this key.",
+      },
+      {
+        name: "parent_key",
+        label: "Parent dropdown",
+        type: "select",
+        optionsResource: "navbar-items",
+        optionsEmptyLabel: "— Top-level item —",
+        optionsFilter: (item) =>
+          item.item_type === "dropdown" && Boolean(item.item_key),
+        optionsMap: (items) =>
+          items.map((item) => ({
+            value: item.item_key,
+            label: `${item.label} (${item.item_key})`,
+          })),
+        hint: "Only set for dropdown children (e.g. Education under projects).",
+      },
+      { name: "display_order", label: "Display order", type: "number" },
+      { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
+    ],
+  },
+  [RESOURCES.FOOTER_LINKS]: {
+    resource: RESOURCES.FOOTER_LINKS,
+    title: "Footer Useful Links",
+    description: "Links in the Footer Useful Links column.",
+    basePath: "/site/footer/links",
+    titleKey: "label",
+    hideImage: true,
+    fields: [
+      { name: "label", label: "Label", required: true },
+      { name: "href", label: "Link", required: true, placeholder: "/about" },
+      { name: "display_order", label: "Display order", type: "number" },
+      { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
+    ],
+  },
+  [RESOURCES.FOOTER_FOCUS]: {
+    resource: RESOURCES.FOOTER_FOCUS,
+    title: "Footer Recent Focus",
+    description: "Items in the Footer Recent Focus column.",
+    basePath: "/site/footer/focus",
+    hideImage: true,
+    fields: [
+      { name: "title", label: "Title", required: true },
+      { name: "href", label: "Link", required: true, placeholder: "/projects/education" },
+      { name: "date_label", label: "Date label", required: true, placeholder: "July 2026" },
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
     ],
