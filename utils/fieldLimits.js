@@ -79,8 +79,18 @@ export const FIELD_LIMITS = {
     registration_link: URL_MAX,
     image_url: IMAGE_URL_MAX,
   },
-  "gallery-items": {
+  "past-events": {
     // Past Events card body — allow fuller CMS copy (~3–4 lines on card)
+    title: 60,
+    description: 380,
+    category: 24,
+    event_date: 32,
+    event_time: 28,
+    venue: 50,
+    registration_link: URL_MAX,
+    image_url: IMAGE_URL_MAX,
+  },
+  "gallery-items": {
     title: 60,
     description: 380,
     category: 24,

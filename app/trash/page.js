@@ -27,7 +27,7 @@ const MODULE_OPTIONS = [
   { value: RESOURCES.TESTIMONIALS, label: "Testimonials" },
   { value: RESOURCES.FEATURED_EVENTS, label: "Featured Events" },
   { value: RESOURCES.UPCOMING_EVENTS, label: "Upcoming Events" },
-  { value: RESOURCES.GALLERY_ITEMS, label: "Past Events" },
+  { value: RESOURCES.PAST_EVENTS, label: "Past Events" },
   { value: RESOURCES.NAVBAR_ITEMS, label: "Navbar" },
   { value: RESOURCES.FOOTER_LINKS, label: "Footer Links" },
   { value: RESOURCES.FOOTER_FOCUS, label: "Footer Focus" },

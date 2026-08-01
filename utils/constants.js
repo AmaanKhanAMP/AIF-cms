@@ -10,7 +10,9 @@ export const RESOURCES = {
   TESTIMONIALS: "testimonials",
   FEATURED_EVENTS: "featured-events",
   UPCOMING_EVENTS: "upcoming-events",
-  GALLERY_ITEMS: "gallery-items",
+  PAST_EVENTS: "past-events",
+  /** @deprecated Use PAST_EVENTS — same backend resource */
+  GALLERY_ITEMS: "past-events",
   NAVBAR_ITEMS: "navbar-items",
   FOOTER_LINKS: "footer-links",
   FOOTER_FOCUS: "footer-focus",

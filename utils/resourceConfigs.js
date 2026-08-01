@@ -173,12 +173,12 @@ export const resourceConfigs = {
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
     ],
   },
-  [RESOURCES.GALLERY_ITEMS]: {
-    resource: RESOURCES.GALLERY_ITEMS,
+  [RESOURCES.PAST_EVENTS]: {
+    resource: RESOURCES.PAST_EVENTS,
     title: "Past Events",
     description: "Past events shown on the Events page grid.",
     basePath: "/events/gallery",
-    folder: "gallery-items",
+    folder: "past-events",
     fields: [
       { name: "image_url", label: "Event image", type: "image", required: true, full: true },
       { name: "title", label: "Title", required: true },
