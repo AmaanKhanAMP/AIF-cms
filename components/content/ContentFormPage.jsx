@@ -35,12 +35,18 @@ export default function ContentFormPage({
   const [saving, setSaving] = useState(false);
   const [dynamicOptions, setDynamicOptions] = useState({});
 
-  // Hard block unused Latest Projects fields even if an old config/cache still lists them.
+  // Hard block unused fields even if an old config/cache still lists them.
   const limitedFields = useMemo(() => {
-    const blocked =
-      resource === "home-projects"
-        ? new Set(["description", "button_text", "button_link"])
-        : null;
+    const blockedByResource = {
+      "home-projects": new Set(["description", "button_text", "button_link"]),
+      "hero-banners": new Set(["description"]),
+      "home-events": new Set(["event_time"]),
+      "featured-events": new Set(["registration_link"]),
+      "upcoming-events": new Set(["event_time", "registration_link"]),
+      "past-events": new Set(["event_time", "registration_link"]),
+      "gallery-items": new Set(["event_time", "registration_link"]),
+    };
+    const blocked = blockedByResource[resource] || null;
     const next = withFieldLimits(resource, fields || []).filter(
       (field) => !blocked || !blocked.has(field.name)
     );
@@ -56,11 +62,28 @@ export default function ContentFormPage({
         const res = await service.get(id);
         if (!cancelled) {
           const raw = { ...defaults, ...(res.data || {}) };
-          // Drop unused Latest Projects keys so they never linger in form state.
+          // Drop unused keys so they never linger in form state / payloads.
           if (resource === "home-projects") {
             delete raw.description;
             delete raw.button_text;
             delete raw.button_link;
+          }
+          if (resource === "hero-banners") {
+            delete raw.description;
+          }
+          if (resource === "home-events") {
+            delete raw.event_time;
+          }
+          if (resource === "featured-events") {
+            delete raw.registration_link;
+          }
+          if (
+            resource === "upcoming-events" ||
+            resource === "past-events" ||
+            resource === "gallery-items"
+          ) {
+            delete raw.event_time;
+            delete raw.registration_link;
           }
           setForm(raw);
         }

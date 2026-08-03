@@ -23,7 +23,7 @@ export const resourceConfigs = {
       { name: "title", label: "Title", required: true },
       { name: "title_accent", label: "Title accent" },
       { name: "subtitle", label: "Subtitle" },
-      { name: "description", label: "Description", type: "textarea" },
+      // Homepage hero uses subtitle only — do not add a Description field.
       { name: "primary_btn_text", label: "Primary button text" },
       { name: "primary_btn_link", label: "Primary button link" },
       { name: "secondary_btn_text", label: "Secondary button text" },
@@ -106,7 +106,7 @@ export const resourceConfigs = {
       { name: "description", label: "Description", type: "textarea" },
       { name: "venue", label: "Venue" },
       { name: "event_date", label: "Event date" },
-      { name: "event_time", label: "Event time" },
+      // Homepage event cards show date only — do not add Event time.
       { name: "speaker", label: "Speaker" },
       { name: "registration_link", label: "Registration link" },
       { name: "button_text", label: "Button text" },
@@ -149,7 +149,7 @@ export const resourceConfigs = {
       { name: "event_date", label: "Event date" },
       { name: "event_time", label: "Event time" },
       { name: "category", label: "Category" },
-      { name: "registration_link", label: "Registration link" },
+      // Events page featured card has no registration CTA.
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
     ],
@@ -166,9 +166,8 @@ export const resourceConfigs = {
       { name: "description", label: "Description", type: "textarea" },
       { name: "venue", label: "Venue" },
       { name: "event_date", label: "Event date" },
-      { name: "event_time", label: "Event time" },
       { name: "category", label: "Category" },
-      { name: "registration_link", label: "Registration link" },
+      // Event cards show date/venue only — no time or registration link.
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
     ],
@@ -192,9 +191,8 @@ export const resourceConfigs = {
       },
       { name: "venue", label: "Venue" },
       { name: "event_date", label: "Event date" },
-      { name: "event_time", label: "Event time" },
       { name: "category", label: "Category" },
-      { name: "registration_link", label: "Details / registration link" },
+      // Past event cards show date/venue only — no time or registration link.
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
     ],

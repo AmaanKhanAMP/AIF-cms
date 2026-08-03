@@ -15,9 +15,8 @@ export const FIELD_LIMITS = {
     // Hero H1 ~2 lines @ 52px / 650px; accent is a short highlight word/phrase
     title: 48,
     title_accent: 24,
-    // Subtitle / description share the lead paragraph (~3–4 lines)
+    // Subtitle is the lead paragraph (~3–4 lines); description is unused
     subtitle: 160,
-    description: 160,
     primary_btn_text: 22,
     primary_btn_link: URL_MAX,
     secondary_btn_text: 22,
@@ -42,7 +41,6 @@ export const FIELD_LIMITS = {
     description: 180,
     venue: 50,
     event_date: 32,
-    event_time: 28,
     speaker: 40,
     registration_link: URL_MAX,
     button_text: 22,
@@ -65,7 +63,6 @@ export const FIELD_LIMITS = {
     event_date: 32,
     event_time: 28,
     category: 24,
-    registration_link: URL_MAX,
     banner_image: IMAGE_URL_MAX,
   },
   "upcoming-events": {
@@ -74,9 +71,7 @@ export const FIELD_LIMITS = {
     description: 120,
     venue: 50,
     event_date: 32,
-    event_time: 28,
     category: 24,
-    registration_link: URL_MAX,
     image_url: IMAGE_URL_MAX,
   },
   "past-events": {
@@ -85,9 +80,7 @@ export const FIELD_LIMITS = {
     description: 380,
     category: 24,
     event_date: 32,
-    event_time: 28,
     venue: 50,
-    registration_link: URL_MAX,
     image_url: IMAGE_URL_MAX,
   },
   "gallery-items": {
@@ -95,9 +88,7 @@ export const FIELD_LIMITS = {
     description: 380,
     category: 24,
     event_date: 32,
-    event_time: 28,
     venue: 50,
-    registration_link: URL_MAX,
     image_url: IMAGE_URL_MAX,
   },
   "navbar-items": {
