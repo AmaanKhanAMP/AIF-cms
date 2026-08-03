@@ -1,11 +1,18 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import uploadService from "@/services/uploadService";
 import { resolveImageUrl } from "@/utils/imageUrl";
 import { useToast } from "@/contexts/ToastContext";
 import { cn } from "@/utils/cn";
+
+function isFinePointerHoverDevice() {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return true;
+  }
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+}
 
 export default function ImageUpload({
   value,
@@ -17,9 +24,11 @@ export default function ImageUpload({
 }) {
   const toast = useToast();
   const inputRef = useRef(null);
+  const containerRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [actionsOpen, setActionsOpen] = useState(false);
 
   const handleFile = useCallback(
     async (file) => {
@@ -60,8 +69,24 @@ export default function ImageUpload({
     handleFile(file);
   };
 
+  // Hide touch overlay when tapping outside the uploader.
+  useEffect(() => {
+    if (!actionsOpen) return undefined;
+    const onPointerDown = (e) => {
+      if (!containerRef.current?.contains(e.target)) {
+        setActionsOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [actionsOpen]);
+
+  useEffect(() => {
+    if (!value) setActionsOpen(false);
+  }, [value]);
+
   return (
-    <div className={cn("space-y-1.5", className)}>
+    <div ref={containerRef} className={cn("space-y-1.5", className)}>
       {label ? <p className="text-[13px] font-semibold text-slate-700">{label}</p> : null}
       <div
         onDragOver={(e) => {
@@ -93,18 +118,42 @@ export default function ImageUpload({
                 aspect === "logo" ? "object-contain p-3" : "object-cover"
               )}
             />
-            <div className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/50 to-transparent p-3 opacity-0 transition hover:opacity-100">
+            <div
+              className={cn(
+                "absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/50 to-transparent p-3 opacity-0 transition hover:opacity-100 focus-within:opacity-100",
+                // Touch / coarse pointer: reveal after tap (desktop still uses hover).
+                actionsOpen && "opacity-100"
+              )}
+              onClick={(e) => {
+                // Desktop mouse uses hover; do not force-open on click.
+                if (isFinePointerHoverDevice()) return;
+                // First tap reveals overlay; action buttons stopPropagation.
+                if (!actionsOpen) {
+                  e.preventDefault();
+                  setActionsOpen(true);
+                }
+              }}
+            >
               <button
                 type="button"
-                onClick={() => inputRef.current?.click()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActionsOpen(false);
+                  inputRef.current?.click();
+                }}
                 className="rounded-lg bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-800"
               >
                 Replace
               </button>
               <button
                 type="button"
-                onClick={() => onChange("")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActionsOpen(false);
+                  onChange("");
+                }}
                 className="rounded-lg bg-white/90 p-1.5 text-slate-700"
+                aria-label="Remove image"
               >
                 <X className="h-4 w-4" />
               </button>
