@@ -16,7 +16,7 @@ export const FIELD_LIMITS = {
     title: 48,
     title_accent: 24,
     // Subtitle is the lead paragraph (~3–4 lines); description is unused
-    subtitle: 160,
+    subtitle: 280,
     primary_btn_text: 22,
     primary_btn_link: URL_MAX,
     secondary_btn_text: 22,
@@ -31,14 +31,14 @@ export const FIELD_LIMITS = {
   "home-gallery": {
     // Accessibility alt + compact caption under each tile
     alt_text: 160,
-    title: 60,
-    description: 120,
+    title: 80,
+    description: 280,
     image_url: IMAGE_URL_MAX,
   },
   "home-events": {
     // Homepage row cards — no line-clamp; keep rows compact
-    title: 60,
-    description: 180,
+    title: 80,
+    description: 280,
     venue: 50,
     event_date: 32,
     speaker: 40,
@@ -49,10 +49,10 @@ export const FIELD_LIMITS = {
   testimonials: {
     // Quote area ~760px / 5–6 lines; meta lines stay single-line
     name: 40,
-    designation: 50,
+    designation: 100,
     organisation: 50,
     location: 40,
-    message: 280,
+    message: 500,
     profile_image: IMAGE_URL_MAX,
   },
   "featured-events": {
@@ -67,8 +67,8 @@ export const FIELD_LIMITS = {
   },
   "upcoming-events": {
     // EventCard: title clamp 2 lines, description clamp 3 lines
-    title: 60,
-    description: 120,
+    title: 80,
+    description: 200,
     venue: 50,
     event_date: 32,
     category: 24,
