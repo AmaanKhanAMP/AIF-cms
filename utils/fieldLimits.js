@@ -62,7 +62,6 @@ export const FIELD_LIMITS = {
     venue: 50,
     event_date: 32,
     event_time: 28,
-    category: 24,
     banner_image: IMAGE_URL_MAX,
   },
   "upcoming-events": {
@@ -71,14 +70,12 @@ export const FIELD_LIMITS = {
     description: 200,
     venue: 50,
     event_date: 32,
-    category: 24,
     image_url: IMAGE_URL_MAX,
   },
   "past-events": {
     // Past Events card body — allow fuller CMS copy (~3–4 lines on card)
     title: 60,
     description: 380,
-    category: 24,
     event_date: 32,
     venue: 50,
     image_url: IMAGE_URL_MAX,
@@ -86,7 +83,6 @@ export const FIELD_LIMITS = {
   "gallery-items": {
     title: 60,
     description: 380,
-    category: 24,
     event_date: 32,
     venue: 50,
     image_url: IMAGE_URL_MAX,

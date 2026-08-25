@@ -31,7 +31,6 @@ function matchesSearch(item, query) {
     item.description,
     item.message,
     item.venue,
-    item.category,
     item.event_date,
     item.date_label,
     item.designation,

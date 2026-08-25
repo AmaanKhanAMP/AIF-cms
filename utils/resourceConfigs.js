@@ -148,7 +148,6 @@ export const resourceConfigs = {
       { name: "venue", label: "Venue" },
       { name: "event_date", label: "Event date" },
       { name: "event_time", label: "Event time" },
-      { name: "category", label: "Category" },
       // Events page featured card has no registration CTA.
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
@@ -166,7 +165,6 @@ export const resourceConfigs = {
       { name: "description", label: "Description", type: "textarea" },
       { name: "venue", label: "Venue" },
       { name: "event_date", label: "Event date" },
-      { name: "category", label: "Category" },
       // Event cards show date/venue only — no time or registration link.
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
@@ -191,7 +189,6 @@ export const resourceConfigs = {
       },
       { name: "venue", label: "Venue" },
       { name: "event_date", label: "Event date" },
-      { name: "category", label: "Category" },
       // Past event cards show date/venue only — no time or registration link.
       { name: "display_order", label: "Display order", type: "number" },
       { name: "status", label: "Status", type: "select", options: STATUS_OPTIONS },
