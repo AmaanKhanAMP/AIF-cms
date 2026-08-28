@@ -119,7 +119,7 @@ export default function Topbar({ breadcrumbs = [], onMenuClick }) {
           <Settings className="h-4 w-4" />
         </Link>
 
-        <div className="relative flex items-center" ref={menuRef}>
+        <div className="relative ml-auto flex shrink-0 items-center" ref={menuRef}>
           <button
             type="button"
             onClick={() => setOpenMenu((v) => !v)}
@@ -140,9 +140,9 @@ export default function Topbar({ breadcrumbs = [], onMenuClick }) {
                 initial={{ opacity: 0, y: 8, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 py-1 shadow-[var(--shadow-lg)] backdrop-blur-xl"
+                className="absolute right-0 top-[calc(100%+0.5rem)] z-30 w-[min(14rem,calc(100vw-1.5rem))] overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 py-1 shadow-[var(--shadow-lg)] backdrop-blur-xl lg:w-56"
               >
-                <div className="border-b border-slate-100 px-4 py-3">
+                <div className="min-w-0 border-b border-slate-100 px-4 py-3">
                   <p className="truncate text-sm font-bold text-slate-900">{user?.name}</p>
                   <p className="truncate text-xs text-slate-500">{user?.email}</p>
                 </div>
