@@ -14,6 +14,7 @@ import SearchInput from "@/components/ui/SearchInput";
 import Select from "@/components/ui/Select";
 import { ConfirmDialog } from "@/components/ui/Modal";
 import trashService from "@/services/trashService";
+import { notifySiteRevalidate } from "@/lib/notifySiteRevalidate";
 import { useToast } from "@/contexts/ToastContext";
 import { resolveImageUrl } from "@/utils/imageUrl";
 import { RESOURCES } from "@/utils/constants";
@@ -86,6 +87,7 @@ export default function TrashPage() {
     setBusyKey(key);
     try {
       await trashService.restore(item.resource, item.id);
+      await notifySiteRevalidate(item.resource);
       toast.success("Restored to original module.");
       setItems((prev) => prev.filter((r) => !(r.resource === item.resource && r.id === item.id)));
     } catch (err) {
@@ -102,6 +104,7 @@ export default function TrashPage() {
     setBusyKey(key);
     try {
       await trashService.permanentDelete(item.resource, item.id);
+      await notifySiteRevalidate(item.resource);
       toast.success("Permanently deleted.");
       setPurge({ open: false, item: null });
       setItems((prev) => prev.filter((r) => !(r.resource === item.resource && r.id === item.id)));

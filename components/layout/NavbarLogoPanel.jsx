@@ -8,6 +8,7 @@ import {
   getNavbarSettings,
   updateNavbarSettings,
 } from "@/services/layoutService";
+import { notifySiteRevalidate } from "@/lib/notifySiteRevalidate";
 import { useToast } from "@/contexts/ToastContext";
 
 const DEFAULTS = {
@@ -51,6 +52,7 @@ export default function NavbarLogoPanel() {
         logo_link: form.logo_link,
       });
       setForm({ ...DEFAULTS, ...(res.data || {}) });
+      await notifySiteRevalidate("layout-navbar");
       toast.success(res.message || "Navbar logo saved.");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to save navbar logo.");

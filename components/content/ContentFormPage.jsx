@@ -10,6 +10,7 @@ import Select from "@/components/ui/Select";
 import ImageUpload from "@/components/ui/ImageUpload";
 import LoadingSkeleton, { Skeleton } from "@/components/common/LoadingSkeleton";
 import { createContentService } from "@/services/contentService";
+import { notifySiteRevalidate } from "@/lib/notifySiteRevalidate";
 import { useToast } from "@/contexts/ToastContext";
 import { STATUS_OPTIONS } from "@/utils/constants";
 import { validateContentForm, withFieldLimits } from "@/utils/fieldLimits";
@@ -187,6 +188,7 @@ export default function ContentFormPage({
       });
       if (isNew) await service.create(payload);
       else await service.update(id, payload);
+      await notifySiteRevalidate(resource);
       toast.success(isNew ? "Created successfully." : "Saved successfully.");
       router.push(basePath);
     } catch (err) {

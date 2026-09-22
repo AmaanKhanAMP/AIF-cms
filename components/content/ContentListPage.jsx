@@ -15,6 +15,7 @@ import SearchInput from "@/components/ui/SearchInput";
 import Modal, { ConfirmDialog } from "@/components/ui/Modal";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { createContentService } from "@/services/contentService";
+import { notifySiteRevalidate } from "@/lib/notifySiteRevalidate";
 import { useToast } from "@/contexts/ToastContext";
 import { resolveImageUrl } from "@/utils/imageUrl";
 
@@ -106,6 +107,7 @@ export default function ContentListPage({
   const handleDuplicate = async (id) => {
     try {
       await service.duplicate(id);
+      await notifySiteRevalidate(resource);
       toast.success("Duplicated.");
       load({ silent: true });
     } catch (err) {
@@ -129,6 +131,7 @@ export default function ContentListPage({
         );
       }
       await load({ silent: true });
+      await notifySiteRevalidate(resource);
       toast.success(isPublished ? "Unpublished." : "Published.");
     } catch (err) {
       toast.error(err.response?.data?.message || "Status update failed.");
@@ -139,6 +142,7 @@ export default function ContentListPage({
     setDeleting(true);
     try {
       await service.remove(confirm.id);
+      await notifySiteRevalidate(resource);
       toast.success("Moved to Trash.");
       setConfirm({ open: false, id: null });
       load();
@@ -164,6 +168,7 @@ export default function ContentListPage({
     setDragIndex(null);
     try {
       await service.reorder(next.map((i) => i.id));
+      await notifySiteRevalidate(resource);
       toast.success("Order saved.");
     } catch (err) {
       toast.error(err.response?.data?.message || "Reorder failed.");

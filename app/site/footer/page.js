@@ -10,6 +10,7 @@ import {
   getFooterSettings,
   updateFooterSettings,
 } from "@/services/layoutService";
+import { notifySiteRevalidate } from "@/lib/notifySiteRevalidate";
 import { useToast } from "@/contexts/ToastContext";
 
 const SECTIONS = [
@@ -134,6 +135,7 @@ export default function FooterSettingsPage() {
         payload[f.name] = form[f.name] ?? "";
       });
       const res = await updateFooterSettings(payload);
+      await notifySiteRevalidate("layout-footer");
       setForm(res.data || payload);
       setErrors({});
       toast.success(res.message || "Footer settings saved.");

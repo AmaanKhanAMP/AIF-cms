@@ -7,6 +7,7 @@ import {
   getSectionVisibility,
   updateSectionVisibility,
 } from "@/services/sectionVisibilityService";
+import { notifySiteRevalidate } from "@/lib/notifySiteRevalidate";
 import { useToast } from "@/contexts/ToastContext";
 
 /**
@@ -45,6 +46,7 @@ export default function SectionVisibilityPanel({
     setSaving(true);
     try {
       const res = await updateSectionVisibility(sectionName, next);
+      await notifySiteRevalidate(`section-${sectionName}`);
       toast.success(
         res?.message ||
           (next
