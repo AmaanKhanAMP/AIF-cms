@@ -21,12 +21,14 @@ export async function POST(request) {
     return NextResponse.json({ ok: false, skipped: true });
   }
 
-  const secret = process.env.REVALIDATION_SECRET;
+  const secret = (process.env.REVALIDATION_SECRET || "").trim();
   const origin = (
     process.env.FRONTEND_ORIGIN ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     ""
-  ).replace(/\/$/, "");
+  )
+    .trim()
+    .replace(/\/$/, "");
 
   if (!secret || !origin) {
     console.error(
@@ -38,6 +40,7 @@ export async function POST(request) {
   try {
     const res = await fetch(`${origin}/api/revalidate`, {
       method: "POST",
+      cache: "no-store",
       headers: {
         "Content-Type": "application/json",
         "x-revalidate-secret": secret,
@@ -46,8 +49,7 @@ export async function POST(request) {
       signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.error("[revalidate-site] frontend rejected", resource, res.status, text);
+      console.error("[revalidate-site] frontend rejected", resource, res.status);
       return NextResponse.json({ ok: false });
     }
     return NextResponse.json({ ok: true, resource });

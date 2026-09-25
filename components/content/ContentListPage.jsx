@@ -121,6 +121,7 @@ export default function ContentListPage({
       const res = isPublished
         ? await service.unpublish(item.id)
         : await service.publish(item.id);
+      await notifySiteRevalidate(resource);
       const updated = res?.data;
       if (updated?.id != null) {
         setItems((prev) =>
@@ -131,7 +132,6 @@ export default function ContentListPage({
         );
       }
       await load({ silent: true });
-      await notifySiteRevalidate(resource);
       toast.success(isPublished ? "Unpublished." : "Published.");
     } catch (err) {
       toast.error(err.response?.data?.message || "Status update failed.");

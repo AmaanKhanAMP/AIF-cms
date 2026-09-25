@@ -10,6 +10,9 @@ export function middleware(request) {
   const auth = request.cookies.get("cms_auth")?.value;
 
   if (!auth && !isPublic) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+    }
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
